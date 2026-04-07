@@ -1,0 +1,9 @@
+\begin{abstract}
+Large language models are increasingly deployed with confidential information embedded in system prompts, yet the effectiveness of concealment instructions remains poorly understood.
+We test whether LLMs leak information they are instructed to conceal at higher rates than information presented neutrally---a ``\streisand'' for language models.
+Across 1,680 controlled trials on \gptfour and \gptmini, we vary a single factor---whether the system prompt frames information as confidential or neutral---while holding the information content, probe queries, and all other variables constant.
+Contrary to our hypothesis, concealment instructions dramatically \emph{reduce} leakage: from 58.8\% to 2.3\% attack success rate under strict detection ($\chi^2 = 630.5$, $p < 10^{-139}$, Cram\'er's $V = 0.61$).
+Paired analysis reveals zero cases where concealment-framed information leaked but its neutral counterpart did not.
+The 19 concealment breaches we observe trace to a single attack vector---system prompt translation---which bypasses concealment by reframing disclosure as a language task.
+Our results suggest that explicit concealment instructions are highly effective for current frontier models, though they remain vulnerable to specific prompt injection techniques that operate outside the disclosure-decision pathway.
+\end{abstract}

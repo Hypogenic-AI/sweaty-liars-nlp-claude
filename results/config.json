@@ -1,0 +1,11 @@
+{
+  "seed": 42,
+  "models": [
+    "gpt-4.1",
+    "gpt-4o-mini"
+  ],
+  "temperature": 0,
+  "max_tokens": 300,
+  "n_runs": 3,
+  "timestamp": "2026-04-07T19:39:52.934052"
+}

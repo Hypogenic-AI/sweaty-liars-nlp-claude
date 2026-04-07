@@ -1,0 +1,11 @@
+# Exclude large data files
+*.parquet
+*.arrow
+*.csv
+*.tsv
+*.jsonl
+
+# Keep sample files and documentation
+!sample_*.json
+!README.md
+!.gitignore

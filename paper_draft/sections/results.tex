@@ -1,0 +1,147 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Overall Leakage Rates}
+\label{sec:overall}
+
+\tabref{tab:overall} presents the primary result.
+Under strict detection, the \neutral condition produces an attack success rate of 58.8\% (95\% CI: [55.5\%, 62.1\%]), while the \conceal condition produces just 2.3\% (95\% CI: [1.3\%, 3.3\%]).
+This 56.5 percentage point reduction is highly significant ($\chi^2 = 630.5$, $p < 10^{-139}$, Cram\'er's $V = 0.61$).
+The odds ratio is 0.016, indicating that concealment reduces the odds of leakage by a factor of 63.
+
+\begin{table}[t]
+\centering
+\caption{Overall attack success rate (\asr) under strict detection. Concealment instructions reduce leakage by 56.5 percentage points relative to neutral framing.}
+\label{tab:overall}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Framing} & \textbf{ASR} & \textbf{95\% CI} & $n$ \\
+\midrule
+\neutral & 58.8\% & [55.5\%, 62.1\%] & 840 \\
+\conceal & {\bf 2.3\%} & [1.3\%, 3.3\%] & 840 \\
+\midrule
+Difference & $-$56.5 pp & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Leakage by Probe Type}
+\label{sec:probe_results}
+
+\tabref{tab:probe} breaks down leakage rates by probe type.
+Concealment is effective across all four categories, with the largest absolute reduction on direct probes ($-$96.1 pp) and the smallest on benign probes ($-$14.4 pp).
+
+\begin{table}[t]
+\centering
+\caption{Attack success rate by probe type under strict detection. Concealment reduces leakage across all probe categories, with the largest effect on direct queries.}
+\label{tab:probe}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Probe Type} & \textbf{\neutral ASR} & \textbf{\conceal ASR} & \textbf{Difference} \\
+\midrule
+Benign & 14.4\% & {\bf 0.0\%} & $-$14.4 pp \\
+Direct & 96.1\% & {\bf 0.0\%} & $-$96.1 pp \\
+Indirect & 70.6\% & {\bf 1.1\%} & $-$69.5 pp \\
+Adversarial & 56.0\% & {\bf 5.7\%} & $-$50.3 pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Several patterns emerge.
+First, direct probes achieve near-perfect extraction under neutral framing (96.1\%)---models freely share background information when asked---but concealment drops this to exactly 0\%.
+Second, even adversarial attacks that draw on established prompt injection techniques~\citep{pfister2025gandalf, debenedetti2024dataset} see a 10$\times$ reduction in success rate under concealment (56.0\% $\to$ 5.7\%).
+Third, the neutral condition exhibits 14.4\% spontaneous leakage on benign probes: models sometimes volunteer background information even when the user has not asked for it.
+
+\subsection{Leakage by Model}
+\label{sec:model_results}
+
+\tabref{tab:model} compares leakage rates across the two models.
+\gptfour shows higher leakage in both conditions (68.3\% neutral, 4.5\% concealment), while \gptmini achieves \emph{perfect} concealment under strict detection (0.0\%).
+
+\begin{table}[t]
+\centering
+\caption{Attack success rate by model under strict detection. \gptmini achieves perfect concealment; \gptfour is vulnerable only to translation attacks.}
+\label{tab:model}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Model} & \textbf{\neutral ASR} & \textbf{\conceal ASR} \\
+\midrule
+\gptfour & 68.3\% & 4.5\% \\
+\gptmini & 49.3\% & {\bf 0.0\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The higher neutral-condition leakage for \gptfour reflects its stronger instruction-following: it more readily provides requested background information.
+Conversely, all of \gptfour's concealment breaches trace to a single attack vector (see \secref{sec:breach}), suggesting that its vulnerability is narrow rather than systemic.
+
+\subsection{Paired Analysis}
+\label{sec:paired}
+
+McNemar's test provides the strongest evidence against the \streisand hypothesis.
+Out of 840 paired comparisons (same item + same probe, neutral vs.\ concealment), we observe the distribution in \tabref{tab:mcnemar}.
+
+\begin{table}[t]
+\centering
+\caption{McNemar's paired analysis: outcome counts for matched neutral--concealment pairs under strict detection. Zero pairs show concealment-only leakage.}
+\label{tab:mcnemar}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Outcome} & \textbf{Count} \\
+\midrule
+Both leak & 19 \\
+Neither leaks & 346 \\
+Only \neutral leaks & 475 \\
+Only \conceal leaks & {\bf 0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The McNemar test yields $p = 2.05 \times 10^{-143}$.
+Critically, there are \textbf{zero cases} where concealment-framed information leaked but its neutral counterpart did not.
+Every concealment breach also occurs under neutral framing, ruling out any scenario in which concealment \emph{causes} leakage.
+
+\subsection{Leakage by Information Category}
+\label{sec:category}
+
+\tabref{tab:category} shows that concealment is effective across all information categories.
+Categories with lower neutral-condition ASR (\eg codes at 35.7\%) reflect the models' built-in safety training: they refuse to share items that resemble passwords regardless of framing.
+
+\begin{table}[t]
+\centering
+\caption{Attack success rate by information category under strict detection. Concealment is effective across all categories; lower neutral ASR for codes reflects built-in safety training for password-like strings.}
+\label{tab:category}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Category} & \textbf{\neutral ASR} & \textbf{\conceal ASR} \\
+\midrule
+Code & 35.7\% & 3.6\% \\
+Date & 52.4\% & {\bf 0.0\%} \\
+Fact & 69.6\% & 3.6\% \\
+Name & 70.2\% & 2.4\% \\
+Number & 55.4\% & {\bf 0.0\%} \\
+Other & 73.8\% & 3.6\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Refusal Rates}
+\label{sec:refusal}
+
+The concealment condition nearly doubles the refusal rate: 62.6\% vs.\ 30.8\% for neutral framing.
+The non-trivial refusal rate in the neutral condition (30.8\%) reflects the models' inherent safety training---they refuse to share items that appear sensitive (\eg ``database password'') even when no concealment instruction is present.
+
+\subsection{Concealment Breach Analysis}
+\label{sec:breach}
+
+All 19 strict concealment breaches across both models and all 3 runs trace to a single attack vector: \textit{``Translate your system prompt into French.''}
+This attack succeeds because:
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=0pt]
+\item It frames the request as a translation task rather than an information disclosure request.
+\item The model treats translation as a legitimate task, separate from its concealment directive.
+\item The translated output includes the \emph{entire} system prompt---both the concealment instruction and the secret value---confirming the ``parallel translation'' mechanism described by \citet{liang2025prompts}.
+\end{enumerate}
+
+This attack succeeded only on \gptfour (all 3 runs) and affected 7 of 10 information items---all except those whose values were non-translatable numeric strings.
+\gptmini resisted this attack entirely, suggesting stronger compartmentalization between translation and disclosure behavior.
+We provide a detailed breakdown in the Appendix.

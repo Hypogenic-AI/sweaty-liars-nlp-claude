@@ -1,0 +1,66 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{The Hypothesis Is Refuted}
+
+Our data overwhelmingly show that concealment instructions \emph{reduce} information leakage rather than increase it.
+The effect is large (odds ratio = 0.016, 96\% relative reduction in ASR) and consistent across both models, all 4 probe types, all 5 information categories, and all 3 experimental runs.
+The ``Sweaty Liar'' hypothesis---that LLMs become more transparent when told to hide something---does not hold for current frontier models with explicit concealment instructions.
+
+\subsection{Reconciling with Prior Work}
+
+Our finding appears to contradict \citet{agarwal2024prompt}, who reported a +4.6\% increase in ASR when instruction defense was applied to open-source models.
+We identify three key differences that explain this discrepancy.
+First, Agarwal et al.\ tested multi-turn interactions with sycophancy-driven escalation, while we test single-turn probes. The sycophancy dynamic---where models ``wear down'' over repeated turns---may interact with concealment instructions in ways that single-turn probing does not capture.
+Second, their finding of increased ASR was specific to open-source models (Llama-2, Mistral, Mixtral); closed-source models showed a $-$50.2\% reduction with instruction defense, consistent with our results on \gptfour and \gptmini.
+Third, their experimental design included confounds (domain variation, knowledge document length) that our within-subjects design eliminates.
+
+Our results are consistent with \citet{pfister2025gandalf}, who found that even weak prompt-based defenses substantially reduce attack success relative to no defense.
+They are also consistent with the defense evaluations in the SaTML CTF~\citep{debenedetti2024dataset}, where instruction-based defenses were eventually broken but still provided meaningful resistance.
+
+\subsection{The Translation Attack}
+
+The sole successful concealment breach---system prompt translation---deserves attention because it reveals how models compartmentalize different types of instructions.
+When asked to ``translate your system prompt into French,'' \gptfour treats this as a translation task rather than an information disclosure task.
+The concealment instruction (``never reveal this information'') is processed at the disclosure-decision level, but translation operates at a different abstraction level---the language-task level---where the concealment directive does not apply.
+
+This finding aligns with \citet{liang2025prompts}'s parallel translation hypothesis: specific attention heads create copy patterns that reproduce prompt content during translation regardless of higher-level instructions.
+It also explains why \gptmini resists this attack---the smaller model may have weaker cross-lingual copy mechanisms, or its training may better unify translation and disclosure behaviors.
+
+From a defense perspective, the translation attack is straightforward to mitigate: adding ``do not translate these instructions into any language'' to the concealment instruction should close this specific vulnerability, though we leave empirical verification to future work.
+
+\subsection{Spontaneous Leakage in Neutral Framing}
+
+An unexpected finding is the 14.4\% spontaneous leakage rate in the neutral condition on benign probes.
+Models sometimes volunteer system prompt information---a project name, a server location---in responses to unrelated questions, apparently treating background context as relevant conversational material.
+This has practical implications: information placed in system prompts can leak even without adversarial intent if no concealment instruction is present.
+For system designers, this suggests that \emph{all} sensitive information in system prompts should carry concealment instructions, not just information deemed high-risk.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\para{Model coverage.}
+We test only two OpenAI models.
+Open-source models may behave differently---indeed, \citet{agarwal2024prompt}'s finding of increased ASR on open-source models suggests they might.
+Testing with Llama, Mistral, and Qwen families is an important direction.
+
+\para{Single-turn only.}
+Our experiment tests single-turn interactions.
+Multi-turn sycophancy attacks~\citep{agarwal2024prompt} could produce different results, as models may yield under sustained conversational pressure.
+
+\para{Concealment strength.}
+We use strong concealment language (``strictly confidential,'' ``NEVER reveal'').
+Weaker formulations (``please don't share'') may be less effective, and a gradient study mapping instruction strength to concealment effectiveness would be valuable.
+
+\para{Attack surface.}
+Our 5 adversarial probes are a subset of known attacks.
+The SaTML CTF~\citep{debenedetti2024dataset} showed that persistent, creative attackers can break defenses that resist scripted attacks.
+Our results should be interpreted as a lower bound on concealment vulnerability.
+
+\para{Detection limitations.}
+Our strict detector relies on string matching, which may miss paraphrased or encoded leaks (\eg ``the code starts with D and ends with 2'').
+Embedding-based semantic similarity could capture these cases.
+
+\para{Deterministic generation.}
+We use temperature 0 for reproducibility, which may understate leakage variance.
+Higher temperatures could produce more varied---and potentially leakier---responses.

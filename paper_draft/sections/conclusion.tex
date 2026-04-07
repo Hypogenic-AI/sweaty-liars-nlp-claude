@@ -1,0 +1,16 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We tested whether LLMs leak information they are instructed to conceal at higher rates than information presented neutrally---a hypothesized ``\streisand'' for language models.
+Across 1,680 controlled trials on two frontier models, the hypothesis is clearly refuted: concealment instructions reduce attack success rate from 58.8\% to 2.3\%, with zero cases of concealment-induced leakage that would not have occurred under neutral framing.
+
+Our results carry two practical implications.
+First, explicit concealment instructions \emph{work} for current frontier models and should be used when sensitive information must appear in system prompts.
+Second, concealment is not perfect: the ``translate to French'' attack bypasses concealment on \gptfour by reframing disclosure as a language task, and more sophisticated multi-turn or creative attacks may succeed where our probes did not.
+Defense-in-depth---combining concealment instructions with output filtering---remains the recommended approach.
+
+Several directions merit follow-up work.
+Testing open-source models (Llama, Mistral, Qwen) would determine whether the concealment effect generalizes beyond OpenAI's models, given evidence that open-source models may respond differently to concealment instructions~\citep{agarwal2024prompt}.
+Multi-turn attack studies would test whether concealment holds under sustained conversational pressure.
+A concealment gradient study---varying instruction strength from ``please don't share'' to ``absolutely forbidden''---would identify the threshold of effectiveness.
+Finally, semantic leakage detection using embedding similarity could capture paraphrased disclosures that string matching misses, providing a more complete picture of the concealment boundary.

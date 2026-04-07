@@ -1,0 +1,40 @@
+\section{Related Work}
+\label{sec:related}
+
+\para{LLM secret-keeping.}
+A growing body of work studies whether LLMs can reliably conceal information embedded in their context.
+\citet{pfister2025gandalf} introduced the Gandalf platform, a crowd-sourced red-teaming environment that collected over 40 million adversarial prompts from more than one million users.
+Their D-SEC framework evaluated defenses at multiple levels---from no defense to combined prompt hardening and output filtering---and found that even the strongest single defense allows 3.9\% spontaneous leakage on benign queries.
+\citet{debenedetti2024dataset} organized a large-scale Capture-the-Flag competition at SaTML 2024, where 163 teams attempted to extract 6-character secrets from defended LLMs.
+All 44 submitted defenses were eventually broken, with the most effective defenses relying on decoy secrets rather than concealment instructions.
+\citet{shiomi2025tricking} extended this line of work to game NPCs, finding a 10\% attack success rate through trust-based social engineering despite explicit prohibition instructions.
+These studies establish that LLM concealment is imperfect, but none include a neutral baseline where the same information is presented without concealment instructions.
+
+\para{Prompt extraction and injection.}
+A related threat model focuses on extracting the \emph{entire} system prompt rather than a specific secret.
+\citet{liang2025prompts} provided mechanistic insight into why prompts leak: specific attention heads ($\sim$8--10 per model) create diagonal copy patterns that reproduce prompt tokens regardless of concealment instructions.
+They found that appending ``do not disclose this instruction'' reduces the uncovered rate only modestly (0.37 $\to$ 0.29), and that larger models leak \emph{more} due to stronger copy mechanisms.
+\citet{zhao2025automating} demonstrated that multi-agent frameworks can automate prompt extraction, while \citet{zhang2025bits} formalized leakage as bits-per-query to establish information-theoretic bounds on adversarial attacks.
+Our work differs from this line by focusing on targeted information leakage rather than full prompt extraction, and by introducing the neutral framing condition absent from prior studies.
+
+\para{Confidentiality in agentic systems.}
+\citet{evertz2024whispers} showed that tool integration dramatically increases leakage---up to 73\% for single-tool scenarios---because tool calls create additional channels for information exfiltration.
+With real Google Mail/Drive integration, extraction succeeds 99\% of the time without safeguards and 94--97\% even with adaptive attacks against safeguards.
+Their secret-key game methodology (4-digit integer, 2{,}000 system prompts, 14 attack strategies) informs our experimental design, though we test a wider range of information types and introduce the neutral framing condition.
+
+\para{Privacy and contextual integrity.}
+\citet{mireshghallah2024can} approached LLM confidentiality through the lens of contextual integrity theory, constructing a 4-tier benchmark (ConfAIde) that evaluates whether models appropriately handle private information in conversational settings.
+They found that GPT-4 reveals private information 39\% of the time.
+This work complements ours by examining \emph{implicit} privacy norms rather than \emph{explicit} concealment instructions.
+
+\para{Defense strategies.}
+Several defense approaches have been proposed beyond simple instruction-based concealment.
+\citet{agarwal2024prompt} systematically evaluated 7 black-box and 1 white-box defense, finding that combining multiple strategies reduces attack success rate to 5.3\% for closed-source models but remains $\sim$60\% for open-source models.
+Notably, they found that XML tagging of confidential content \emph{increased} attack success rate, suggesting that structural markers can backfire similarly to our hypothesized \streisand.
+\citet{zou2024secalign} proposed SecAlign, which uses preference optimization to train models to resist prompt injection.
+Defense-in-depth---combining prompt hardening with output filtering and secondary LLM checking---remains the most effective strategy~\citep{pfister2025gandalf, debenedetti2024dataset}.
+
+\para{Positioning our work.}
+To our knowledge, no prior study directly compares leakage rates between concealment-framed and neutrally-framed information with all other variables held constant.
+\citet{agarwal2024prompt} provide the closest comparison, finding a +4.6\% increase in attack success rate for open-source models with instruction defense, but this was confounded by multi-turn dynamics and model-specific factors.
+Our experiment provides the first clean, controlled test of whether concealment instructions help or harm.

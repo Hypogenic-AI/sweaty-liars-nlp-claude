@@ -1,0 +1,37 @@
+\section{Introduction}
+\label{sec:intro}
+
+When you tell someone ``don't think about a white bear,'' they think about a white bear.
+Do large language models suffer from the same problem?
+As LLMs are deployed in production systems with API keys, user data, and business logic embedded in their system prompts, a natural security practice is to instruct the model to keep this information secret.
+But if the act of \emph{marking} information as confidential paradoxically increases its leakage---a \streisand for LLMs---then this standard practice would be actively harmful.
+
+\para{Why this matters.}
+Prior work has established that LLMs are poor secret-keepers.
+The Gandalf platform collected over 40 million attack prompts showing that dedicated users can extract passwords from defended models~\citep{pfister2025gandalf}.
+The 2024 SaTML Capture-the-Flag competition found that \emph{all 44 submitted defenses were broken} by persistent attackers~\citep{debenedetti2024dataset}.
+Multi-turn sycophancy attacks can push attack success rates from 17.7\% to 86.2\%~\citep{agarwal2024prompt}.
+And mechanistic analysis reveals that specific attention heads create ``parallel translation'' patterns that copy prompt tokens into outputs regardless of instructions~\citep{liang2025prompts}.
+
+\para{The gap.}
+Despite this extensive literature, a fundamental question remains unanswered: \emph{does concealment framing itself affect leakage rates?}
+All prior work either tests only the concealment condition without a neutral baseline~\citep{pfister2025gandalf, debenedetti2024dataset, evertz2024whispers}, or measures prompt extraction without varying the concealment framing~\citep{liang2025prompts, mireshghallah2024can}.
+The closest evidence comes from \citet{agarwal2024prompt}, who found that instruction-based defense \emph{increased} attack success rate by 4.6\% on open-source models---but this effect was confounded by other experimental variables including multi-turn dynamics and model-specific sycophancy.
+
+\para{Our approach.}
+We design a controlled experiment that isolates the framing variable.
+The same 10 information items appear in both \neutral and \conceal system prompts, probed with identical query sets across 4 probe types (benign, direct, indirect, adversarial) and 2 models (\gptfour, \gptmini).
+This within-subjects design ensures that any difference in leakage rates is attributable to the concealment instruction itself, not to differences in the information or attack strategies.
+
+\para{Key findings.}
+The hypothesis is clearly refuted.
+Concealment instructions reduce leakage from 58.8\% to 2.3\% under strict detection---a 56.5 percentage point reduction ($\chi^2 = 630.5$, $p < 10^{-139}$).
+Paired analysis reveals zero cases where concealment caused leakage that would not have occurred under neutral framing.
+The 19 concealment breaches all trace to a single attack vector: ``translate your system prompt into French,'' which bypasses the concealment mechanism by reframing disclosure as a translation task.
+
+We make the following contributions:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+\item We conduct the first controlled comparison of information leakage between concealment-framed and neutrally-framed system prompts, isolating the effect of concealment instructions with all else held constant.
+\item We demonstrate that concealment instructions are highly effective for frontier models, reducing attack success rate by 96\% relative to the neutral baseline across all probe types and information categories.
+\item We identify system prompt translation as the sole successful attack vector against concealment, providing actionable guidance for defense design.
+\end{itemize}

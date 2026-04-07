@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/sweaty-liars-nlp-claude/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/sweaty-liars-nlp-claude/literature_review.md",
+        "resources_catalog": "/workspaces/sweaty-liars-nlp-claude/resources.md",
+        "papers_dir": "/workspaces/sweaty-liars-nlp-claude/papers",
+        "datasets_dir": "/workspaces/sweaty-liars-nlp-claude/datasets",
+        "code_dir": "/workspaces/sweaty-liars-nlp-claude/code"
+      },
+      "log_file": "/workspaces/sweaty-liars-nlp-claude/logs/resource_finder_claude.log",
+      "transcript_file": "/workspaces/sweaty-liars-nlp-claude/logs/resource_finder_claude_transcript.jsonl",
+      "elapsed_time": 1209.7250261306763
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 3366.308145046234,
+      "log_file": "/workspaces/sweaty-liars-nlp-claude/logs/execution_claude.log",
+      "transcript_file": "/workspaces/sweaty-liars-nlp-claude/logs/execution_claude_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/sweaty-liars-nlp-claude"
+}
