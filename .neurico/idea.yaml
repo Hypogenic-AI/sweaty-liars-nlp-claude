@@ -1,0 +1,16 @@
+idea:
+  title: Sweaty Liars
+  domain: nlp
+  hypothesis: 'LLMs leak information they are told to conceal more than information
+    they are told neutrally.
+
+    '
+  metadata:
+    author: Ari Holtzman
+    source: IdeaHub
+    source_url: https://hypogenic.ai/ideahub/idea/q5ill8RKYmqU2FLByRUy
+    idea_id: sweaty_liars_20260407_191650_97dfb426
+    created_at: '2026-04-07T19:16:50.684258'
+    status: submitted
+    github_repo_name: sweaty-liars-nlp-claude
+    github_repo_url: https://github.com/Hypogenic-AI/sweaty-liars-nlp-claude
